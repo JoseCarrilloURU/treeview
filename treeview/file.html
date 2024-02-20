@@ -123,6 +123,14 @@
                     childCheckboxes[i].checked = checkbox.checked;
                   }
 
+                  checkbox.addEventListener("change", function () {
+                    const childCheckboxes = li.getElementsByTagName("input");
+                    for (let i = 0; i < childCheckboxes.length; i++) {
+                      childCheckboxes[i].checked = checkbox.checked;
+                    }
+                    updateParentCheckboxes(li);
+                  });
+
                   // Check the parent checkbox if all child checkboxes are checked
                   const parentCheckbox =
                     li.parentElement.parentElement.querySelector("input");
@@ -147,6 +155,24 @@
                 treeRoot.appendChild(createNode(item));
               });
             });
+        }
+      }
+
+      function updateParentCheckboxes(element) {
+        const parentLi = element.parentElement.parentElement;
+        if (parentLi) {
+          const parentCheckbox = parentLi.querySelector("input");
+          if (parentCheckbox) {
+            const siblingCheckboxes = parentLi.querySelectorAll("input");
+            /*parentCheckbox.checked = Array.from(siblingCheckboxes).every(
+              (checkbox) => checkbox.checked
+            );*/
+            parentCheckbox.indeterminate =
+              Array.from(siblingCheckboxes).some(
+                (checkbox) => checkbox.checked
+              ) && !parentCheckbox.checked;
+            updateParentCheckboxes(parentLi);
+          }
         }
       }
 
